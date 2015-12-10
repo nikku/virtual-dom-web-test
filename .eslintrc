@@ -2,7 +2,7 @@
   "rules": {
     "indent": [ 2, 2, { "VariableDeclarator": { "var": 2, "let": 2, "const": 3 } } ],
     "linebreak-style": [ 2, "unix" ],
-    "no-unused-vars": [ 2, { "args": "after-used" } ],
+    "no-unused-vars": [ 2, { "args": "none" } ],
     "quotes": [ 2, "single" ],
     "react/jsx-key": 1,
     "react/jsx-no-undef": 1,
@@ -22,5 +22,10 @@
   },
   "plugins": [
     "react"
-  ]
+  ],
+  "globals": {
+    "expect": false,
+    "it": false,
+    "describe": false
+  }
 }
