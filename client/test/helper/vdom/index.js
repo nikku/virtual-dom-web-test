@@ -1,6 +1,6 @@
 'use strict';
 
-global.h = require('vdom/h');
+var h = global.h = require('vdom/h');
 
 var isString = require('lodash/lang/isString');
 
@@ -19,6 +19,13 @@ function select(selector, element) {
 }
 
 module.exports.select = select;
+
+
+function render(element) {
+  return h(element);
+}
+
+module.exports.render = render;
 
 
 function simulateEvent(element, event) {

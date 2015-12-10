@@ -5,6 +5,7 @@ var Actions = require('test/helper/mock/Actions');
 var BpmnEditor = require('app/tabs/views/BpmnEditor');
 
 var select = require('test/helper/vdom').select,
+    render = require('test/helper/vdom').render,
     simulateEvent = require('test/helper/vdom').simulateEvent;
 
 
@@ -43,7 +44,7 @@ describe('BpmnEditor', function() {
     });
 
     // when
-    var tree = tab.render();
+    var tree = render(tab);
 
     var element = select('[ref=properties-toggle]', tree);
 
