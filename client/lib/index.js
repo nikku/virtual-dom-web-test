@@ -10,9 +10,6 @@ var diff = require('virtual-dom/diff'),
     patch = require('virtual-dom/patch'),
     createElement = require('virtual-dom/create-element');
 
-// setImmediate shim for WebKit and Firefox
-require('setimmediate');
-
 // provide vdom utility
 global.h = require('vdom/h');
 
