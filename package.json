@@ -1,0 +1,62 @@
+{
+  "name": "web-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rm -rfv dist/*",
+    "copy": "cp client/lib/index.html dist",
+    "build": "npm run copy && npm run bundle:js",
+    "dev": "npm run clean && npm run copy && concurrent -k \"npm run bundle:less:watch\" \"npm run bundle:js:watch\" \"http-server dist -o\"",
+    "test:client": "karma start client/test/config/karma.unit.js",
+    "bundle:js": "NODE_PATH=client/lib browserify client/lib/index.js > dist/index.js",
+    "bundle:js:watch": "NODE_PATH=client/lib watchify client/lib/index.js -v -o dist/index.js",
+    "bundle:less:watch": "autoless --source-map client/lib dist"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "autoless": "0.1.7",
+    "babel-plugin-syntax-jsx": "^6.1.18",
+    "babel-plugin-transform-react-jsx": "^6.2.0",
+    "babelify": "^7.2.0",
+    "browserify": "^12.0.1",
+    "chai": "^3.4.1",
+    "concurrently": "^1.0.0",
+    "eslint": "^1.10.3",
+    "eslint-plugin-react": "^3.11.2",
+    "http-server": "^0.8.5",
+    "karma": "^0.13.15",
+    "karma-browserify": "^4.4.2",
+    "karma-chai": "^0.1.0",
+    "karma-mocha": "^0.2.1",
+    "karma-phantomjs-launcher": "^0.2.1",
+    "karma-sinon-chai": "^1.1.0",
+    "mocha": "^2.3.4",
+    "phantomjs": "^1.9.19",
+    "sinon": "^1.17.2",
+    "sinon-chai": "^2.8.0",
+    "stringify": "^3.2.0",
+    "virtual-dom": "^2.1.1",
+    "vtree-select": "^2.0.0",
+    "watchify": "^3.6.1"
+  },
+  "browserify": {
+    "transform": [
+      "babelify"
+    ]
+  },
+  "dependencies": {
+    "bpmn-js": "^0.12.1",
+    "debug": "^2.2.0",
+    "dmn-js": "^0.3.1",
+    "dom-delegator": "^13.1.0",
+    "domready": "^1.0.8",
+    "events": "^1.1.0",
+    "inherits": "^2.0.1",
+    "lodash": "^3.10.1",
+    "raf": "^3.1.0",
+    "virtual-hook": "^1.0.1"
+  }
+}
