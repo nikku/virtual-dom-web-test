@@ -207,10 +207,12 @@ function App() {
 
   this.render = function() {
     var html =
-      <div className="editor">
+      <div className="app">
         <MenuBar entries={ menuEntries } />
         <Tabbed tabs={ tabs } active={ activeTab } actions={ actions } />
-        <Log entries={ log.entries } open={ log.open } onToggle={ actions.compose('log:toggle') } />
+        <div className="footer">
+          <Log entries={ log.entries } open={ log.open } onToggle={ actions.compose('log:toggle') } />
+        </div>
       </div>;
 
     return html;

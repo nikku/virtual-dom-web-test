@@ -15,23 +15,25 @@ function Tabbed(options) {
         activeTab = options.active;
 
     var html =
-      <div className="tabbed">
-        <div className="tabbar">
-          <ul>
-            { tabs.map(function(tab) {
+      <div className={ 'tabbed ' + (options.className || '') }>
+        <div className="tabs">
+          {
+            tabs.map(tab => {
               var action = tab.action || actions.compose('tab:select', tab);
 
-              return <li className={ tab === activeTab ? 'active' : ''} key={ tab.id }>
-                <a title={ tab.title || tab.label } onClick={ action }>{ tab.label }</a>
-                { tab.closable
-                    ? <CloseHandle dirty={ tab.dirty }
-                                   onClick={ actions.compose('tab:close', tab) } />
-                    : null }
-              </li>;
-            }) }
-          </ul>
+              return (
+                <div className={ tab === activeTab ? 'active tab' : 'tab'} key={ tab.id }>
+                  <a title={ tab.title || tab.label } onClick={ action }>{ tab.label }</a>
+                  { tab.closable
+                      ? <CloseHandle dirty={ tab.dirty }
+                                     onClick={ actions.compose('tab:close', tab) } />
+                      : null }
+                </div>
+              );
+            })
+          }
         </div>
-        <div className="contents">
+        <div className="content">
           { activeTab ? h(activeTab) : null }
         </div>
       </div>;

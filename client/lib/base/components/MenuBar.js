@@ -13,14 +13,12 @@ function MenuBar(options) {
 
     var entries = options.entries;
 
-    var html = <div class="menu-bar">
-      <ul>
-        {
-          entries.map(function(e) {
-            return <li key={ e.id }>{ h(e) }</li>;
-          })
-        }
-      </ul>
+    var html = <div className="menu-bar">
+      {
+        entries.map(e => {
+          return <div className="entry" key={ e.id }>{ h(e) }</div>;
+        })
+      }
     </div>;
 
     return html;

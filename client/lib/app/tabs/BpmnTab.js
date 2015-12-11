@@ -49,6 +49,8 @@ function BpmnTab(options) {
   this.showView = function(type) {
     activeView = views[type];
 
+    console.log('show view', type);
+
     actions.emit('changed');
   };
 
@@ -57,16 +59,18 @@ function BpmnTab(options) {
     var compose = this.compose;
 
     var html =
-      <div className="FOOO">
-        <h1>I am BPMN --- the { options.id } TAB!</h1>
+      <div className="bpmn-tab tabbed">
+        <div className="content">
+          <h1>I am BPMN --- the { options.id } TAB!</h1>
 
-        { h(activeView) }
+          { h(activeView) }
+        </div>
 
-        <button onClick={ compose('showView', 'xml') }>XML</button>
-        <button onClick={ compose('showView', 'diagram') }>Diagram</button>
-
-        <button onClick={ compose('closeTab') }>Close me!</button>
-
+        <div className="tabs">
+          <div className="tab" onClick={ compose('showView', 'xml') }>XML</div>
+          <div className="tab" onClick={ compose('showView', 'diagram') }>Diagram</div>
+          <div className="tab" onClick={ compose('closeTab') }>X</div>
+        </div>
       </div>;
 
     return html;

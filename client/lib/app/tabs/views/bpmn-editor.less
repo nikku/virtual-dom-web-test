@@ -1,0 +1,32 @@
+.bpmn-editor {
+  .flex-container(row);
+  flex-grow: 1;
+
+  > .canvas {
+    flex: 1;
+
+    position: relative;
+
+    > .diagram-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+    }
+  }
+
+  > .properties {
+    flex: initial;
+
+    position: relative;
+
+    .toggle {
+      position: absolute;
+      left: -20px;
+      top: 20px;
+      background: #CCC;
+      padding: 5px;
+    }
+  }
+}

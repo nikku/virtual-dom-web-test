@@ -21,6 +21,17 @@ var HOOKS = {
   onAppend: AppendHook
 };
 
+var ELEMENT_EVENTS = [
+  'drag',
+  'dragend',
+  'dragenter',
+  'dragexit',
+  'dragleave',
+  'dragover',
+  'dragstart',
+  'drop'
+];
+
 /**
  * A jsx compatible implementation of `virtual-dom/h`.
  *
@@ -60,6 +71,9 @@ module.exports = function() {
   throw new Error('element or constructor expected as first argument');
 };
 
+function canDelegate(eventName) {
+  return ELEMENT_EVENTS.indexOf(eventName) === -1;
+}
 
 /**
  * Prepare hooks passed with a vdom element.
@@ -95,7 +109,8 @@ function prepareHooks(options) {
   // apply event handler hooks
   forEach(options, function(value, key) {
 
-    var eventHandler = /^on[A-Z]+/.test(key);
+    var eventHandler = /^on[A-Z]+/.test(key),
+        eventName;
 
     // hook already set
     if (newOptions[key]) {
@@ -103,6 +118,8 @@ function prepareHooks(options) {
     }
 
     if (eventHandler) {
+
+      eventName = key.replace(/on/, '').toLowerCase();
 
       if (isArray(value)) {
         value = bind(value);
@@ -112,7 +129,11 @@ function prepareHooks(options) {
         throw new Error(key + ' value must be fn');
       }
 
-      key = key.replace(/on/, 'ev-').toLowerCase();
+      if (canDelegate(eventName)) {
+        key = 'ev-' + eventName;
+      } else {
+        key = 'on' + eventName;
+      }
     }
 
     newOptions[key] = value;

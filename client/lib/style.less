@@ -1,2 +1,49 @@
+@import "_includes";
+@import "_variables";
+
+@import "_base";
+
+@import "app/tabs/bpmn-tab";
+
 @import "base/components/menu-bar";
 @import "base/components/tabbed";
+
+
+.app {
+
+  .flex-container(column);
+
+  overflow: hidden;
+
+  .menu-bar {
+    .flex-container(row);
+
+    flex: initial;
+
+    > .entry {
+      flex: initial;
+    }
+  }
+
+  .tabbed {
+    .flex-container(column);
+
+    flex: 1;
+
+    > .tabs {
+      .flex-container(row);
+
+      > .tab {
+        flex: initial;
+      }
+    }
+
+    > .content {
+      .flex-container(column);
+    }
+  }
+
+  .footer {
+    flex: initial;
+  }
+}

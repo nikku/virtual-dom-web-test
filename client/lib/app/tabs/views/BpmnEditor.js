@@ -8,6 +8,10 @@ var BpmnJS = require('bpmn-js/lib/Modeler');
 
 var debug = require('debug')('bpmn-editor');
 
+var domify = require('domify');
+
+var dragger = require('util/dragger');
+
 
 function BpmnEditor(options) {
 
@@ -15,8 +19,7 @@ function BpmnEditor(options) {
 
   var actions = options.actions;
 
-  var $el = document.createElement('div');
-  $el.textContent = 'FOOO BAR ' + options.id;
+  var $el = domify('<div class="diagram-container"></div>');
 
   var modeler = this.modeler = new BpmnJS({ container: $el });
 
@@ -54,30 +57,57 @@ function BpmnEditor(options) {
     node.removeChild($el);
   };
 
-  this.toggleProperties = function() {
+  this.resizeProperties = dragger(function onDrag(event, delta) {
+
+    var newWidth = Math.max(options.layout.propertiesPanel.width + delta.x * -1, 0);
+
+    if (newWidth < 25) {
+      newWidth = 0;
+    }
 
     actions.emit('layout:update', {
       propertiesPanel: {
-        open: !options.layout.propertiesPanel.open
+        open: newWidth > 0,
+        width: newWidth
+      }
+    });
+  });
+
+  this.toggleProperties = function() {
+
+    var config = options.layout.propertiesPanel;
+
+    actions.emit('layout:update', {
+      propertiesPanel: {
+        open: !config.open,
+        width: !config.open ? (config.width || 250) : config.width
       }
     });
   };
 
   this.render = function() {
 
-    var compose = this.compose;
+    var propertiesLayout = options.layout.propertiesPanel;
+
+    var propertiesStyle = {
+      width: (propertiesLayout.open ? propertiesLayout.width : 0) + 'px'
+    };
 
     return (
       <div className="bpmn-editor" key={ options.id + '#bpmn' }>
-        <div class="canvas"
-             onAppend={ compose('mount') }
-             onRemove={ compose('unmount') }>
+        <div className="canvas"
+             onAppend={ this.compose('mount') }
+             onRemove={ this.compose('unmount') }>
         </div>
-        {
-          options.layout.propertiesPanel.open
-            ? <div ref="properties-toggle" onClick={ compose('toggleProperties') }>Close Panel</div>
-            : <div ref="properties-toggle" onClick={ compose('toggleProperties') }>Open Panel</div>
-        }
+        <div className="properties" style={ propertiesStyle }>
+          <div className="toggle"
+               ref="properties-toggle"
+               draggable="true"
+               onClick={ this.compose('toggleProperties') }
+               onDragstart={ this.compose('resizeProperties') }>
+            { (propertiesLayout.open ? 'Close' : 'Open') + ' Panel' }
+          </div>
+        </div>
       </div>
     );
   };

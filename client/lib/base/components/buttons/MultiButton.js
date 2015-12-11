@@ -3,6 +3,9 @@
 var ensureOpts = require('util/ensure-opts');
 
 
+var Separator = require('./Separator');
+
+
 function MultiButton(options) {
 
   if (!(this instanceof MultiButton)) {
@@ -19,10 +22,24 @@ function MultiButton(options) {
   this.render = function() {
 
     var html =
-      <button onClick={ primaryChoice.action }>
-        { primaryChoice.icon ? <span className={ primaryChoice.icon }></span> : null }
-        { primaryChoice.label || '' }
-      </button>;
+      <div className="multi-button">
+        <button onClick={ primaryChoice.action }>
+          { primaryChoice.icon ? <span className={ primaryChoice.icon }></span> : null }
+          { primaryChoice.label || '' }
+        </button>
+
+        <Separator />
+
+        <ul className="dropdown">
+          {
+            choices.map(c => {
+              return <li onClick={ c.action }>
+                { c.label }
+              </li>;
+            })
+          }
+        </ul>
+      </div>;
 
     return html;
   };
