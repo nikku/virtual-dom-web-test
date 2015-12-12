@@ -13,37 +13,38 @@
 
   .flex-container(column);
 
+  height: 100%;
   overflow: hidden;
 
   .menu-bar {
     .flex-container(row);
-
-    flex: initial;
+    .flex-fill(initial);
 
     > .entry {
-      flex: initial;
+      .flex-fill(initial);
     }
   }
 
   .tabbed {
     .flex-container(column);
-
-    flex: 1;
+    .flex-fill(1);
 
     > .tabs {
       .flex-container(row);
+      .flex-fill(initial);
 
       > .tab {
-        flex: initial;
+        .flex-fill(initial);
       }
     }
 
     > .content {
       .flex-container(column);
+      .flex-fill(1);
     }
   }
 
   .footer {
-    flex: initial;
+    .flex-fill(initial);
   }
 }
