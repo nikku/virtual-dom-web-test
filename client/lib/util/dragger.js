@@ -18,6 +18,8 @@ function dragger(fn) {
   var self;
   var extraArgs;
 
+  var startPosition;
+
   function onDrag(event) {
 
     // suppress drag end event
@@ -25,7 +27,10 @@ function dragger(fn) {
       return;
     }
 
-    var args = extraArgs.concat([ event, { x: event.offsetX, y: event.offsetY } ]);
+    var currentPosition = eventPosition(event),
+        delta = pointDelta(currentPosition, startPosition);
+
+    var args = extraArgs.concat([ event, delta ]);
 
     // call provided fn with extraArgs..., event, delta
     return fn.apply(self, args);
@@ -40,6 +45,7 @@ function dragger(fn) {
 
     self = this;
     extraArgs = args;
+    startPosition = eventPosition(event);
 
     // (1) prevent preview image
     event.dataTransfer.setDragImage(emptyCanvas(), 0, 0);
@@ -47,11 +53,12 @@ function dragger(fn) {
     // (2) setup drag listeners
     var target = event.target;
 
-
     // detach on end
     var onEnd = function() {
       target.removeEventListener('drag', onDrag);
       target.removeEventListener('dragend', onEnd);
+
+      self = extraArgs = startPosition = null;
     };
 
     // attach drag + cleanup event
@@ -65,4 +72,18 @@ module.exports = dragger;
 
 function emptyCanvas() {
   return domify('<canvas width="0" height="0" />');
+}
+
+function eventPosition(event) {
+  return {
+    x: event.screenX,
+    y: event.screenY
+  };
+}
+
+function pointDelta(a, b) {
+  return {
+    x: a.x - b.x,
+    y: a.y - b.y
+  };
 }

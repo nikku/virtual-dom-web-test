@@ -12,6 +12,8 @@ var domify = require('domify');
 
 var dragger = require('util/dragger');
 
+var copy = require('util/copy');
+
 
 function BpmnEditor(options) {
 
@@ -57,17 +59,15 @@ function BpmnEditor(options) {
     node.removeChild($el);
   };
 
-  this.resizeProperties = dragger(function onDrag(event, delta) {
+  this.resizeProperties = dragger(function onDrag(panelLayout, event, delta) {
 
-    var newWidth = Math.max(options.layout.propertiesPanel.width + delta.x * -1, 0);
+    var oldWidth = panelLayout.open ? panelLayout.width : 0;
 
-    if (newWidth < 25) {
-      newWidth = 0;
-    }
+    var newWidth = Math.max(oldWidth + delta.x * -1, 0);
 
     actions.emit('layout:update', {
       propertiesPanel: {
-        open: newWidth > 0,
+        open: newWidth > 25,
         width: newWidth
       }
     });
@@ -80,7 +80,7 @@ function BpmnEditor(options) {
     actions.emit('layout:update', {
       propertiesPanel: {
         open: !config.open,
-        width: !config.open ? (config.width || 250) : config.width
+        width: !config.open ? (config.width > 25 ? config.width : 250) : config.width
       }
     });
   };
@@ -104,8 +104,8 @@ function BpmnEditor(options) {
                ref="properties-toggle"
                draggable="true"
                onClick={ this.compose('toggleProperties') }
-               onDragstart={ this.compose('resizeProperties') }>
-            { (propertiesLayout.open ? 'Close' : 'Open') + ' Panel' }
+               onDragstart={ this.compose('resizeProperties', copy(propertiesLayout)) }>
+            Properties Panel
           </div>
         </div>
       </div>
