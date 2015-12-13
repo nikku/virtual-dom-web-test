@@ -61,15 +61,18 @@ function BpmnTab(options) {
     var html =
       <div className="bpmn-tab tabbed">
         <div className="content">
-          <h1>I am BPMN --- the { options.id } TAB!</h1>
-
           { h(activeView) }
         </div>
 
         <div className="tabs">
-          <div className="tab" onClick={ compose('showView', 'xml') }>XML</div>
-          <div className="tab" onClick={ compose('showView', 'diagram') }>Diagram</div>
-          <div className="tab" onClick={ compose('closeTab') }>X</div>
+          <div className={ 'tab ' + (activeView === views['diagram'] ? 'active' : '') }
+               onClick={ compose('showView', 'diagram') }>
+            Diagram
+          </div>
+          <div className={ 'tab ' + (activeView === views['xml'] ? 'active' : '') }
+               onClick={ compose('showView', 'xml') }>
+           XML
+         </div>
         </div>
       </div>;
 
