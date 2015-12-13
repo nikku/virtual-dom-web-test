@@ -1,9 +1,16 @@
 'use strict';
 
+var BaseComponent = require('base/BaseComponent');
+
+var inherits = require('inherits');
+
 var ensureOpts = require('util/ensure-opts');
 
 
 function Log(options) {
+
+  BaseComponent.call(this);
+
 
   ensureOpts([ 'entries', 'onToggle' ], options);
 
@@ -14,12 +21,11 @@ function Log(options) {
 
     return (
       <div className="log">
-        <div class="header">
-          <h3 onClick={ options.onToggle }>LOG YEA</h3>
-        </div>
+        <div className="header" onClick={ options.onToggle }>LOG YEA</div>
         {
           options.open
-            ? <div class="entries">
+            ? <div className="entries">
+                <div className="resize-handle"></div>
                 {
                   entries.map(function(e) {
 
@@ -44,5 +50,7 @@ function Log(options) {
     );
   };
 }
+
+inherits(Log, BaseComponent);
 
 module.exports = Log;
