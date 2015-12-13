@@ -39,6 +39,7 @@ domReady(function() {
     });
 
     app.emit('tab:add', debuggerTab, { select: true });
+    app.emit('create-diagram', 'BPMN');
   });
 
   var tree = app.render();
