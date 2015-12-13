@@ -1,0 +1,56 @@
+@import "misc/close-handle";
+
+.tabbed {
+
+  > .tabs {
+    .no-user-select;
+
+    white-space: nowrap;
+    flex-wrap: wrap;
+
+    z-index: 100;
+
+    > .tab {
+      background: #F6F6F6;
+      cursor: default;
+
+      &.active {
+        background: white;
+      }
+
+      &:hover:not(.active) {
+        background: #FAFAFA;
+      }
+    }
+  }
+
+  &.main {
+
+    margin: 5px;
+
+    > .tabs {
+
+      > .tab {
+
+        border: solid 1px #CCC;
+        border-radius: 2px 2px 0 0;
+
+        padding: 7px 9px 5px 9px;
+        margin: 1px 5px -1px 0;
+
+        &.active {
+          margin-top: -1px;
+          border-bottom: none;
+
+          border-top: solid 2px blue;
+        }
+      }
+    }
+
+    > .content {
+      border: solid 1px #CCC;
+
+      border-radius: 0 2px 2px 2px;
+    }
+  }
+}

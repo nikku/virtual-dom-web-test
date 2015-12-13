@@ -22,8 +22,11 @@ function Tabbed(options) {
               var action = tab.action || actions.compose('tab:select', tab);
 
               return (
-                <div className={ tab === activeTab ? 'active tab' : 'tab'} key={ tab.id }>
-                  <a title={ tab.title || tab.label } onClick={ action }>{ tab.label }</a>
+                <div className={ tab === activeTab ? 'active tab' : 'tab'}
+                     key={ tab.id }
+                     title={ tab.title || tab.label }
+                     onClick={ action }>
+                  { tab.label }
                   { tab.closable
                       ? <CloseHandle dirty={ tab.dirty }
                                      onClick={ actions.compose('tab:close', tab) } />

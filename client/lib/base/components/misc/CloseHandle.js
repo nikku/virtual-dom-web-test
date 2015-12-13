@@ -17,7 +17,7 @@ function CloseHandle(options) {
       className += ' dirty';
     }
 
-    return <span className={ className } onClick={ options.onClick }>x</span>;
+    return <span className={ className } onClick={ options.onClick }></span>;
   };
 }
 
