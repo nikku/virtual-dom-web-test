@@ -6,10 +6,12 @@ var inherits = require('inherits');
 
 var h = require('vdom/h');
 
-var Tab = require('base/components/Tab');
+var ensureOpts = require('util/ensure-opts');
 
-var BpmnEditor = require('./views/BpmnEditor'),
-    XMLEditor = require('./views/XMLEditor');
+var Tab = require('base/components/tab');
+
+var BpmnEditor = require('./views/bpmn-editor'),
+    XMLEditor = require('./views/xml-editor');
 
 
 function BpmnTab(options) {
@@ -20,6 +22,8 @@ function BpmnTab(options) {
 
   Tab.call(this, options);
 
+  ensureOpts([ 'actions' ], options);
+
   var views = {
     diagram: new BpmnEditor(options),
     xml: new XMLEditor(options)
@@ -27,29 +31,17 @@ function BpmnTab(options) {
 
   var activeView = views['diagram'];
 
-  /**
-   * Called from the editor to execute an action
-   * if this tab is the active one.
-   *
-   * @param {String} action
-   * @param {Object} options
-   */
-  this.triggerAction = function(action) {
-
-  };
-
   var actions = options.actions;
 
-  this.closeTab = function() {
-    debug('closeTab');
-
-    actions.emit('tab:close', this);
-  };
-
   this.showView = function(type) {
+
+    if (!views[type]) {
+      throw new Error('no view ' + type);
+    }
+
     activeView = views[type];
 
-    console.log('show view', type);
+    debug('show view %s', type);
 
     actions.emit('changed');
   };
@@ -66,10 +58,12 @@ function BpmnTab(options) {
 
         <div className="tabs">
           <div className={ 'tab ' + (activeView === views['diagram'] ? 'active' : '') }
+               tabIndex="0"
                onClick={ compose('showView', 'diagram') }>
             Diagram
           </div>
           <div className={ 'tab ' + (activeView === views['xml'] ? 'active' : '') }
+               tabIndex="0"
                onClick={ compose('showView', 'xml') }>
            XML
          </div>

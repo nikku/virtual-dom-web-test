@@ -2,7 +2,7 @@
 
 var inherits = require('inherits');
 
-var Tab = require('base/components/Tab');
+var Tab = require('base/components/tab');
 
 
 function EmptyTab(options) {

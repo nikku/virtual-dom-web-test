@@ -21,11 +21,11 @@ module.exports = function(karma) {
     ],
 
     files: [
-      'test/**/*Spec.js'
+      'test/**/*spec.js'
     ],
 
     preprocessors: {
-      'test/**/*Spec.js': [ 'browserify' ]
+      'test/**/*spec.js': [ 'browserify' ]
     },
 
     reporters: [ 'dots' ],

@@ -2,20 +2,21 @@
 
 var merge = require('lodash/object/merge');
 
-var MenuBar = require('base/components/MenuBar'),
-    Tabbed = require('base/components/Tabbed');
+var MenuBar = require('base/components/menu-bar'),
+    Tabbed = require('base/components/tabbed');
 
-var MultiButton = require('base/components/buttons/MultiButton'),
-    Button = require('base/components/buttons/Button'),
-    Separator = require('base/components/buttons/Separator');
+var MultiButton = require('base/components/buttons/multi-button'),
+    Button = require('base/components/buttons/button'),
+    Separator = require('base/components/buttons/separator');
 
-var BpmnTab = require('./tabs/BpmnTab');
+var BpmnTab = require('./tabs/bpmn-tab');
 
-var EmptyTab = require('./tabs/EmptyTab');
+var EmptyTab = require('./tabs/empty-tab');
 
-var Log = require('./Log');
+var Footer = require('./footer');
 
-var Actions = require('base/Actions');
+var Actions = require('base/actions'),
+    Logger = require('base/logger');
 
 var debug = require('debug')('app');
 
@@ -24,21 +25,16 @@ function App() {
 
   var actions = new Actions();
 
-  var log = {
-    entries: [
-      { message: 'hello' },
-      { message: 'Close log', action: actions.compose('log:toggle') }
-    ]
-  };
+  var logger = new Logger();
 
   var layout = {
     propertiesPanel: {
-      open: true,
+      open: false,
       width: 250
     },
     log: {
-      open: true,
-      height: 200
+      open: false,
+      height: 150
     }
   };
 
@@ -110,19 +106,15 @@ function App() {
     }
   });
 
-
-  actions.on('log:add', function(entry) {
-    log.entries.push(entry);
-
-    actions.emit('changed');
-  });
-
   actions.on('log:toggle', function() {
-    log.open = !log.open;
-
-    actions.emit('changed');
+    actions.emit('layout:update', {
+      log: {
+        open: !(layout.log && layout.log.open)
+      }
+    });
   });
 
+  logger.on('changed', actions.compose('changed'));
 
   actions.on('layout:update', function(newLayout) {
     layout = merge(layout, newLayout);
@@ -139,6 +131,8 @@ function App() {
     }
 
     activeTab = tab;
+
+    logger.info('switch to <%s> tab', tab.id);
 
     actions.emit('changed');
   });
@@ -184,6 +178,7 @@ function App() {
         closable: true,
         dirty: newDiagramCount % 2 === 0,
         actions: actions,
+        logger: logger,
         layout: layout
       });
     }
@@ -204,16 +199,22 @@ function App() {
     actions.emit('changed');
   });
 
+
   ///////// public API yea! //////////////////////////////////////
 
   this.render = function() {
     var html =
       <div className="app">
         <MenuBar entries={ menuEntries } />
-        <Tabbed className="main" tabs={ tabs } active={ activeTab } actions={ actions } />
-        <div className="footer">
-          <Log entries={ log.entries } open={ log.open } onToggle={ actions.compose('log:toggle') } />
-        </div>
+        <Tabbed
+          className="main"
+          tabs={ tabs }
+          active={ activeTab }
+          actions={ actions } />
+        <Footer
+          layout={ layout }
+          log={ logger }
+          actions={ actions } />
       </div>;
 
     return html;

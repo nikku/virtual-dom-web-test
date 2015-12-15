@@ -2,7 +2,7 @@
 
 var h = require('vdom/h');
 
-var CloseHandle = require('./misc/CloseHandle');
+var CloseHandle = require('./misc/close-handle');
 
 
 function Tabbed(options) {
@@ -25,7 +25,8 @@ function Tabbed(options) {
                 <div className={ tab === activeTab ? 'active tab' : 'tab'}
                      key={ tab.id }
                      title={ tab.title || tab.label }
-                     onClick={ action }>
+                     onClick={ action }
+                     tabIndex="0">
                   { tab.label }
                   { tab.closable
                       ? <CloseHandle dirty={ tab.dirty }

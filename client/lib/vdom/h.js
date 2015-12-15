@@ -14,11 +14,13 @@ var slice = require('util/slice'),
     bind = require('util/bind');
 
 var RemoveHook = require('./hooks/remove'),
-    AppendHook = require('./hooks/append');
+    AppendHook = require('./hooks/append'),
+    ScrollToHook = require('./hooks/scroll-to');
 
 var HOOKS = {
   onRemove: RemoveHook,
-  onAppend: AppendHook
+  onAppend: AppendHook,
+  scrollTo: ScrollToHook
 };
 
 var ELEMENT_EVENTS = [
@@ -96,10 +98,6 @@ function prepareHooks(options) {
 
     if (isArray(value)) {
       value = bind(value);
-    }
-
-    if (!isFunction(value)) {
-      throw new Error(key + ' value must be fn');
     }
 
     newOptions[key] = wrap(value);

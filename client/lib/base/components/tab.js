@@ -4,7 +4,7 @@ var assign = require('lodash/object/assign');
 
 var inherits = require('inherits');
 
-var BaseComponent = require('../BaseComponent');
+var BaseComponent = require('../component');
 
 
 function Tab(options) {

@@ -3,7 +3,7 @@
 var ensureOpts = require('util/ensure-opts');
 
 
-var Separator = require('./Separator');
+var Separator = require('./separator');
 
 
 function MultiButton(options) {

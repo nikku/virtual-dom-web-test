@@ -18,7 +18,7 @@ var App = require('./app');
 // init dom-delegator
 Delegator();
 
-var EmptyTab = require('app/tabs/EmptyTab');
+var EmptyTab = require('app/tabs/empty-tab');
 
 
 domReady(function() {

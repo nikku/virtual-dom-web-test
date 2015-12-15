@@ -51,17 +51,17 @@ describe('BpmnEditor', function() {
     // then
     expect(element).to.exists;
 
-    var layoutUpdate = false;
+    var panelOpen = false;
 
-    actions.on('layout:update', function() {
-      layoutUpdate = true;
+    actions.on('layout:update', function(updated) {
+      panelOpen = updated.propertiesPanel.open;
     });
 
     // but when
     simulateEvent(element, 'click');
 
     // then
-    expect(layoutUpdate).to.be.true;
+    expect(panelOpen).to.be.true;
   });
 
 });

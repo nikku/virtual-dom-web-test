@@ -4,7 +4,7 @@ var inherits = require('inherits');
 
 var ensureOpts = require('util/ensure-opts');
 
-var BaseComponent = require('base/BaseComponent');
+var BaseComponent = require('base/component');
 
 
 function Editor(options) {

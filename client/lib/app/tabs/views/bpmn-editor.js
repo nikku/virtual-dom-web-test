@@ -2,7 +2,7 @@
 
 var inherits = require('inherits');
 
-var Editor = require('./Editor');
+var Editor = require('./editor');
 
 var BpmnJS = require('bpmn-js/lib/Modeler');
 
@@ -12,6 +12,8 @@ var domify = require('domify');
 
 var dragger = require('util/dragger');
 
+var ensureOpts = require('util/ensure-opts');
+
 var copy = require('util/copy');
 
 
@@ -19,7 +21,11 @@ function BpmnEditor(options) {
 
   Editor.call(this, options);
 
-  var actions = options.actions;
+  ensureOpts([ 'logger', 'actions', 'layout' ], options);
+
+
+  var actions = options.actions,
+      logger = options.logger;
 
   var $el = domify('<div class="diagram-container"></div>');
 
@@ -44,9 +50,21 @@ function BpmnEditor(options) {
     node.appendChild($el);
 
     if (!opened) {
-      modeler.createDiagram(function() {
+      logger.info('ref:' + options.id, 'diagram <%s> opening', options.id);
+
+      modeler.createDiagram(function(err, warnings) {
         opened = true;
         updateEditState();
+
+        logger.info('diagram <%s> opened', options.id);
+
+        if (err) {
+          logger.info('ERROR: %s', err.message);
+        }
+
+        if (warnings.length) {
+          logger.info('WARNINGS: \n%s', warnings.join('\n'));
+        }
       });
     } else {
       updateEditState();
@@ -96,10 +114,11 @@ function BpmnEditor(options) {
     return (
       <div className="bpmn-editor" key={ options.id + '#bpmn' }>
         <div className="canvas"
+             tabIndex="0"
              onAppend={ this.compose('mount') }
              onRemove={ this.compose('unmount') }>
         </div>
-        <div className="properties" style={ propertiesStyle }>
+        <div className="properties" style={ propertiesStyle } tabIndex="0">
           <div className="toggle"
                ref="properties-toggle"
                draggable="true"
