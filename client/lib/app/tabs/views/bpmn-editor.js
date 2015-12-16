@@ -21,10 +21,10 @@ function BpmnEditor(options) {
 
   Editor.call(this, options);
 
-  ensureOpts([ 'logger', 'actions', 'layout' ], options);
+  ensureOpts([ 'logger', 'events', 'layout' ], options);
 
 
-  var actions = options.actions,
+  var events = options.events,
       logger = options.logger;
 
   var $el = domify('<div class="diagram-container"></div>');
@@ -83,7 +83,7 @@ function BpmnEditor(options) {
 
     var newWidth = Math.max(oldWidth + delta.x * -1, 0);
 
-    actions.emit('layout:update', {
+    events.emit('layout:update', {
       propertiesPanel: {
         open: newWidth > 25,
         width: newWidth
@@ -95,7 +95,7 @@ function BpmnEditor(options) {
 
     var config = options.layout.propertiesPanel;
 
-    actions.emit('layout:update', {
+    events.emit('layout:update', {
       propertiesPanel: {
         open: !config.open,
         width: !config.open ? (config.width > 25 ? config.width : 250) : config.width

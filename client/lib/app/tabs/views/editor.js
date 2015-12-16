@@ -11,10 +11,10 @@ function Editor(options) {
 
   BaseComponent.call(this);
 
-  ensureOpts([ 'actions' ], options);
+  ensureOpts([ 'events' ], options);
 
   this.updateEditorActions = function(state) {
-    options.actions.emit('tools:update-edit-state', this, state);
+    options.events.emit('tools:update-edit-state', this, state);
   };
 }
 

@@ -4,7 +4,7 @@ var debug = require('debug')('bpmn-tab');
 
 var inherits = require('inherits');
 
-var Tab = require('base/components/Tab');
+var Tab = require('base/components/tab');
 
 var DmnJS = require('bpmn-js/lib/Modeler');
 
@@ -17,7 +17,7 @@ function DmnTab(options) {
 
   Tab.call(this, options);
 
-  var actions = options.actions;
+  var events = options.events;
 
   var $el = document.createElement('div');
   $el.textContent = 'FOOO BAR ' + options.id;
@@ -28,7 +28,7 @@ function DmnTab(options) {
 
   function updateEditState() {
 
-    actions.emit('tools:update-edit-state', this, {
+    events.emit('tools:update-edit-state', this, {
       undo: true
     });
   }
@@ -60,12 +60,12 @@ function DmnTab(options) {
   this.closeTab = function() {
     debug('closeTab');
 
-    actions.emit('tab:close', this);
+    events.emit('tab:close', this);
   };
 
   this.toggleProperties = function() {
 
-    actions.emit('layout:update', {
+    events.emit('layout:update', {
       propertiesPanel: {
         open: !options.layout.propertiesPanel.open
       }

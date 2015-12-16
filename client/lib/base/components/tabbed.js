@@ -2,14 +2,19 @@
 
 var h = require('vdom/h');
 
+var ensureOpts = require('util/ensure-opts');
+
 var CloseHandle = require('./misc/close-handle');
 
 
 function Tabbed(options) {
 
-  var actions = options.actions;
+  ensureOpts([ 'events' ], options);
+
 
   this.render = function() {
+
+    var events = options.events;
 
     var tabs = options.tabs,
         activeTab = options.active;
@@ -19,7 +24,7 @@ function Tabbed(options) {
         <div className="tabs">
           {
             tabs.map(tab => {
-              var action = tab.action || actions.compose('tab:select', tab);
+              var action = tab.action || events.composeEmitter('tab:select', tab);
 
               return (
                 <div className={ tab === activeTab ? 'active tab' : 'tab'}
@@ -30,7 +35,7 @@ function Tabbed(options) {
                   { tab.label }
                   { tab.closable
                       ? <CloseHandle dirty={ tab.dirty }
-                                     onClick={ actions.compose('tab:close', tab) } />
+                                     onClick={ events.composeEmitter('tab:close', tab) } />
                       : null }
                 </div>
               );

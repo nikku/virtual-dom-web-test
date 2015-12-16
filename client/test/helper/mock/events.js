@@ -2,12 +2,12 @@
 
 var slice = require('util/slice');
 
-var Actions = require('base/actions');
+var Events = require('base/events');
 
 
-function MockActions() {
+function MockEvents() {
 
-  var actions = new Actions();
+  var events = new Events();
 
   this.registeredListeners = [];
 
@@ -19,7 +19,7 @@ function MockActions() {
 
     this.registeredListeners.push(args);
 
-    actions.on.apply(actions, args);
+    events.on.apply(events, args);
   };
 
   this.emit = function() {
@@ -28,13 +28,17 @@ function MockActions() {
 
     this.recordedEvents.push(args);
 
-    actions.emit.apply(actions, args);
+    events.emit.apply(events, args);
   };
 
   this.clear = function() {
     this.recordedEvents.length = 0;
     this.registeredListeners.length = 0;
   };
+
+  this.composeEmitter = function() {
+    return events.composeEmitter.apply(events, slice(arguments));
+  };
 }
 
-module.exports = MockActions;
+module.exports = MockEvents;

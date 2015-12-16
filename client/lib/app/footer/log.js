@@ -17,9 +17,9 @@ function Log(options) {
 
   BaseComponent.call(this);
 
-  ensureOpts([ 'actions', 'layout', 'log' ], options);
+  ensureOpts([ 'events', 'layout', 'log' ], options);
 
-  var actions = options.actions;
+  var events = options.events;
 
 
   this.resizeLog = function onDrag(logLayout, event, delta) {
@@ -28,7 +28,7 @@ function Log(options) {
 
     var newHeight = Math.max(oldHeight + delta.y * -1, 0);
 
-    actions.emit('layout:update', {
+    events.emit('layout:update', {
       log: {
         open: newHeight > 25,
         height: newHeight
@@ -43,7 +43,7 @@ function Log(options) {
   };
 
   this.toggleLog = function() {
-    actions.emit('layout:update', {
+    events.emit('layout:update', {
       log: {
         open: !options.layout.log.open
       }

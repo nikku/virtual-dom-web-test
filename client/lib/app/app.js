@@ -1,6 +1,7 @@
 'use strict';
 
-var merge = require('lodash/object/merge');
+var merge = require('lodash/object/merge'),
+    bind = require('lodash/function/bind');
 
 var MenuBar = require('base/components/menu-bar'),
     Tabbed = require('base/components/tabbed');
@@ -15,17 +16,19 @@ var EmptyTab = require('./tabs/empty-tab');
 
 var Footer = require('./footer');
 
-var Actions = require('base/actions'),
-    Logger = require('base/logger');
+var ensureOpts = require('util/ensure-opts');
 
 var debug = require('debug')('app');
 
+/**
+ * The main application entry point
+ */
+function App(options) {
 
-function App() {
+  ensureOpts([ 'logger', 'events' ], options);
 
-  var actions = new Actions();
-
-  var logger = new Logger();
+  var logger = options.logger,
+      events = options.events;
 
   var layout = {
     propertiesPanel: {
@@ -44,14 +47,14 @@ function App() {
       choices: [
           {
             id: 'create-bpmn-diagram',
-            action: actions.compose('create-diagram', 'BPMN'),
+            action: events.composeEmitter('create-diagram', 'BPMN', 'foo'),
             label: 'Create new BPMN diagram',
             icon: 'icon-new',
             primary: true
           },
           {
             id: 'create-dmn-diagram',
-            action: actions.compose('create-diagram', 'DMN'),
+            action: events.composeEmitter('create-diagram', 'DMN'),
             label: 'Create new DMN diagram'
           }
       ]
@@ -59,29 +62,29 @@ function App() {
     Button({
       id: 'open',
       icon: 'icon-open',
-      action: actions.compose('open-diagram')
+      action: events.composeEmitter('open-diagram')
     }),
     Separator(),
     Button({
       id: 'save-current',
       icon: 'icon-save',
-      action: actions.compose('current:save')
+      action: events.composeEmitter('current:save')
     }),
     Button({
       id: 'current-save-as',
       icon: 'icon-save-as',
-      action: actions.compose('current:save-as')
+      action: events.composeEmitter('current:save-as')
     }),
     Separator(),
     Button({
       id: 'undo',
       icon: 'icon-undo',
-      action: actions.compose('current:undo')
+      action: events.composeEmitter('current:undo')
     }),
     Button({
       id: 'redo',
       icon: 'icon-redo',
-      action: actions.compose('current:redo')
+      action: events.composeEmitter('current:redo')
     })
   ];
 
@@ -90,39 +93,38 @@ function App() {
       id: 'create-diagram',
       label: '+',
       title: 'Create new Diagram',
-      action: actions.compose('create-diagram', 'BPMN')
+      action: events.composeEmitter('create-diagram', 'BPMN')
     })
   ];
 
   var activeTab = tabs[0];
 
-
-  actions.on('tools:update-edit-state', function(tab, newState) {
+  events.on('tools:update-edit-state', (tab, newState) => {
 
     if (tab === activeTab) {
       debug('update-edit-state', newState);
 
-      actions.emit('changed');
+      events.emit('changed');
     }
   });
 
-  actions.on('log:toggle', function() {
-    actions.emit('layout:update', {
+  events.on('log:toggle', () => {
+    events.emit('layout:update', {
       log: {
         open: !(layout.log && layout.log.open)
       }
     });
   });
 
-  logger.on('changed', actions.compose('changed'));
+  logger.on('changed', events.composeEmitter('changed'));
 
-  actions.on('layout:update', function(newLayout) {
+  events.on('layout:update', newLayout => {
     layout = merge(layout, newLayout);
 
-    actions.emit('changed');
+    events.emit('changed');
   });
 
-  actions.on('tab:select', function(tab) {
+  events.on('tab:select', tab => {
 
     var exists = contains(tabs, tab);
 
@@ -134,11 +136,11 @@ function App() {
 
     logger.info('switch to <%s> tab', tab.id);
 
-    actions.emit('changed');
+    events.emit('changed');
   });
 
 
-  actions.on('tab:close', function(tab) {
+  events.on('tab:close', tab => {
     debug('close tab', tab);
 
     var exists = contains(tabs, tab);
@@ -154,16 +156,16 @@ function App() {
 
     // if tab was active, select previous (if exists) or next tab
     if (tab === activeTab) {
-      actions.emit('tab:select', tabs[idx - 1] || tabs[idx]);
+      events.emit('tab:select', tabs[idx - 1] || tabs[idx]);
     }
 
-    actions.emit('changed');
+    events.emit('changed');
   });
 
 
   var newDiagramCount = 0;
 
-  actions.on('create-diagram', function(type) {
+  events.on('create-diagram', type => {
 
     var diagramName, tab;
 
@@ -176,27 +178,26 @@ function App() {
         id: diagramName,
         label: diagramName,
         closable: true,
-        dirty: newDiagramCount % 2 === 0,
-        actions: actions,
+        events: events,
         logger: logger,
         layout: layout
       });
     }
 
     if (tab) {
-      actions.emit('tab:add', tab, { select: true });
+      events.emit('tab:add', tab, { select: true });
     }
   });
 
-  actions.on('tab:add', function(tab, config) {
+  events.on('tab:add', (tab, config) => {
 
     tabs.splice(tabs.length - 1, 0, tab);
 
     if (config && config.select) {
-      actions.emit('tab:select', tab);
+      events.emit('tab:select', tab);
     }
 
-    actions.emit('changed');
+    events.emit('changed');
   });
 
 
@@ -210,22 +211,23 @@ function App() {
           className="main"
           tabs={ tabs }
           active={ activeTab }
-          actions={ actions } />
+          events={ events } />
         <Footer
           layout={ layout }
           log={ logger }
-          actions={ actions } />
+          events={ events } />
       </div>;
 
     return html;
   };
 
   this.run = function() {
-    actions.emit('app:run');
+    events.emit('app:run');
   };
 
-  this.on = actions.on.bind(actions);
-  this.emit = actions.emit.bind(actions);
+  // make #on and #emit available via app
+  this.on = bind(events.on, events);
+  this.emit = bind(events.emit, events);
 }
 
 module.exports = App;

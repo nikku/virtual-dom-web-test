@@ -7,17 +7,17 @@ var Log = require('./log');
 
 function Footer(options) {
 
-  ensureOpts([ 'log', 'layout', 'actions' ], options);
+  ensureOpts([ 'log', 'layout', 'events' ], options);
 
   this.render = function() {
 
     var log = options.log,
         layout = options.layout,
-        actions = options.actions;
+        events = options.events;
 
     var html =
       <div className="footer">
-        <Log log={ log } layout={ layout } actions={ actions } />
+        <Log log={ log } layout={ layout } events={ events } />
       </div>;
 
     return html;

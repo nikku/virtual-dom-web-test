@@ -22,7 +22,7 @@ function BpmnTab(options) {
 
   Tab.call(this, options);
 
-  ensureOpts([ 'actions' ], options);
+  ensureOpts([ 'events' ], options);
 
   var views = {
     diagram: new BpmnEditor(options),
@@ -31,7 +31,7 @@ function BpmnTab(options) {
 
   var activeView = views['diagram'];
 
-  var actions = options.actions;
+  var events = options.events;
 
   this.showView = function(type) {
 
@@ -43,7 +43,7 @@ function BpmnTab(options) {
 
     debug('show view %s', type);
 
-    actions.emit('changed');
+    events.emit('changed');
   };
 
   this.render = function() {

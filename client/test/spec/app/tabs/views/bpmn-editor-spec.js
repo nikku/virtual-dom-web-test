@@ -1,6 +1,6 @@
 'use strict';
 
-var Actions = require('test/helper/mock/actions'),
+var Events = require('test/helper/mock/events'),
     Logger = require('test/helper/mock/logger');
 
 var BpmnEditor = require('app/tabs/views/bpmn-editor');
@@ -10,15 +10,20 @@ var select = require('test/helper/vdom').select,
     simulateEvent = require('test/helper/vdom').simulateEvent;
 
 
+function findPropertiesToggle(tree) {
+  return select('[ref=properties-toggle]', tree);
+}
+
+
 describe('BpmnEditor', function() {
 
   it('should unit test', function() {
 
-    var actions = new Actions();
+    var events = new Events();
 
     // given
     var tab = new BpmnEditor({
-      actions: actions,
+      events: events,
       logger: new Logger(),
       layout: {
         propertiesPanel: {}
@@ -38,10 +43,10 @@ describe('BpmnEditor', function() {
 
   describe('properties panel', function() {
 
-    var actions;
+    var events;
 
     beforeEach(function() {
-      actions = new Actions();
+      events = new Events();
     });
 
 
@@ -49,7 +54,7 @@ describe('BpmnEditor', function() {
 
       // given
       var tab = new BpmnEditor({
-        actions: actions,
+        events: events,
         logger: new Logger(),
         layout: {
           propertiesPanel: {
@@ -61,13 +66,13 @@ describe('BpmnEditor', function() {
 
       var tree = render(tab);
 
-      var element = select('[ref=properties-toggle]', tree);
+      var element = findPropertiesToggle(tree);
 
       // when close toggle
       simulateEvent(element, 'click');
 
       // then
-      expect(actions.recordedEvents).to.eql([
+      expect(events.recordedEvents).to.eql([
         [
           'layout:update',
           {
@@ -85,7 +90,7 @@ describe('BpmnEditor', function() {
 
       // given
       var tab = new BpmnEditor({
-        actions: actions,
+        events: events,
         logger: new Logger(),
         layout: {
           propertiesPanel: {
@@ -97,13 +102,13 @@ describe('BpmnEditor', function() {
 
       var tree = render(tab);
 
-      var element = select('[ref=properties-toggle]', tree);
+      var element = findPropertiesToggle(tree);
 
       // when close toggle
       simulateEvent(element, 'click');
 
       // then
-      expect(actions.recordedEvents).to.eql([
+      expect(events.recordedEvents).to.eql([
         [
           'layout:update',
           {
@@ -121,7 +126,7 @@ describe('BpmnEditor', function() {
 
       // given
       var tab = new BpmnEditor({
-        actions: actions,
+        events: events,
         logger: new Logger(),
         layout: {
           propertiesPanel: {
@@ -133,14 +138,14 @@ describe('BpmnEditor', function() {
 
       var tree = render(tab);
 
-      var element = select('[ref=properties-toggle]', tree);
+      var element = findPropertiesToggle(tree);
 
       // when dragging
       simulateEvent(element, 'dragstart', { screenX: 0, screenY: 0 });
       simulateEvent(element, 'drag', { screenX: 50, screenY: 0 });
 
       // then
-      expect(actions.recordedEvents).to.eql([
+      expect(events.recordedEvents).to.eql([
         [
           'layout:update',
           {

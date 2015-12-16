@@ -13,17 +13,24 @@ var diff = require('virtual-dom/diff'),
 // provide vdom utility
 global.h = require('vdom/h');
 
+
+var Logger = require('base/logger'),
+    Events = require('base/events');
+
 var App = require('./app');
+
+var EmptyTab = require('app/tabs/empty-tab');
 
 // init dom-delegator
 Delegator();
 
-var EmptyTab = require('app/tabs/empty-tab');
-
 
 domReady(function() {
 
-  var app = new App();
+  var app = new App({
+    logger: new Logger(),
+    events: new Events()
+  });
 
   app.on('app:run', function() {
 
@@ -48,6 +55,7 @@ domReady(function() {
 
   document.body.appendChild(rootNode);
 
+  // main loop
   app.on('changed', function() {
 
     raf(function() {
