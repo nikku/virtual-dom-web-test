@@ -14,7 +14,7 @@
     "test:client": "karma start client/test/config/karma.unit.js --single-run --no-auto-watch",
     "build:js": "NODE_PATH=client/lib browserify client/lib/index.js > dist/index.js",
     "build:css": "lessc --include-path=client/lib:client/styles client/lib/*.less dist/style.css",
-    "watch:js": "NODE_PATH=client/lib watchify client/lib/index.js -v -o dist/index.js",
+    "watch:js": "NODE_PATH=client/lib watchify client/lib/index.js -v --debug -o dist/index.js",
     "watch:css": "chokidar 'client/**/*.less' --initial -c 'npm run build:css -- --source-map-map-inline --verbose'"
   },
   "author": "",
@@ -22,6 +22,7 @@
   "devDependencies": {
     "babel-plugin-syntax-jsx": "^6.1.18",
     "babel-plugin-transform-react-jsx": "^6.2.0",
+    "babel-plugin-transform-es2015-arrow-functions": "^6.3.13",
     "babelify": "^7.2.0",
     "browserify": "^12.0.1",
     "chai": "^3.4.1",
