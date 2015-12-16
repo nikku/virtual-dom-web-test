@@ -77,7 +77,7 @@ function BpmnEditor(options) {
     node.removeChild($el);
   };
 
-  this.resizeProperties = dragger(function onDrag(panelLayout, event, delta) {
+  this.resizeProperties = function onDrag(panelLayout, event, delta) {
 
     var oldWidth = panelLayout.open ? panelLayout.width : 0;
 
@@ -89,7 +89,7 @@ function BpmnEditor(options) {
         width: newWidth
       }
     });
-  });
+  };
 
   this.toggleProperties = function() {
 
@@ -105,6 +105,8 @@ function BpmnEditor(options) {
 
   this.render = function() {
 
+    var compose = this.compose;
+
     var propertiesLayout = options.layout.propertiesPanel;
 
     var propertiesStyle = {
@@ -115,15 +117,15 @@ function BpmnEditor(options) {
       <div className="bpmn-editor" key={ options.id + '#bpmn' }>
         <div className="canvas"
              tabIndex="0"
-             onAppend={ this.compose('mount') }
-             onRemove={ this.compose('unmount') }>
+             onAppend={ compose('mount') }
+             onRemove={ compose('unmount') }>
         </div>
         <div className="properties" style={ propertiesStyle } tabIndex="0">
           <div className="toggle"
                ref="properties-toggle"
                draggable="true"
-               onClick={ this.compose('toggleProperties') }
-               onDragstart={ this.compose('resizeProperties', copy(propertiesLayout)) }>
+               onClick={ compose('toggleProperties') }
+               onDragstart={ dragger(compose('resizeProperties', copy(propertiesLayout))) }>
             Properties Panel
           </div>
         </div>

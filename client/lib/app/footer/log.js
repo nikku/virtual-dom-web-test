@@ -22,7 +22,7 @@ function Log(options) {
   var actions = options.actions;
 
 
-  this.resizeLog = dragger(function onDrag(logLayout, event, delta) {
+  this.resizeLog = function onDrag(logLayout, event, delta) {
 
     var oldHeight = logLayout.open ? logLayout.height : 0;
 
@@ -34,7 +34,7 @@ function Log(options) {
         height: newHeight
       }
     });
-  });
+  };
 
   this.closeOnEscape = function(event) {
     if (isEscape(event)) {
@@ -52,6 +52,8 @@ function Log(options) {
 
   this.render = function() {
 
+    var compose = this.compose;
+
     var entries = options.log.entries;
 
     var focusedEntry = entries[entries.length - 1];
@@ -64,16 +66,16 @@ function Log(options) {
 
     return (
       <div className="log">
-        <div className="header" onClick={ this.compose('toggleLog') }>LOG YEA</div>
+        <div className="header" onClick={ compose('toggleLog') }>LOG YEA</div>
         <div className="resize-handle"
              draggable="true"
-             onDragStart={ this.compose('resizeLog', copy(logLayout)) }></div>
+             onDragStart={ dragger(compose('resizeLog', copy(logLayout))) }></div>
         {
           logLayout.open
             ? <div className="entries"
                    style={ logStyle }
                    tabIndex="0"
-                   onKeydown={ this.compose('closeOnEscape') }>
+                   onKeydown={ compose('closeOnEscape') }>
                 {
                   entries.map(function(e) {
 
