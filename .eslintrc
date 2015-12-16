@@ -26,6 +26,8 @@
   "globals": {
     "expect": false,
     "it": false,
-    "describe": false
+    "describe": false,
+    "beforeEach": true,
+    "afterEach": true
   }
 }

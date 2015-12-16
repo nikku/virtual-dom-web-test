@@ -135,7 +135,7 @@ describe('BpmnEditor', function() {
 
       var element = select('[ref=properties-toggle]', tree);
 
-      // when trigger drag
+      // when dragging
       simulateEvent(element, 'dragstart', { screenX: 0, screenY: 0 });
       simulateEvent(element, 'drag', { screenX: 50, screenY: 0 });
 
