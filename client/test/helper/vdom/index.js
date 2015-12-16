@@ -2,7 +2,8 @@
 
 var h = global.h = require('vdom/h');
 
-var isString = require('lodash/lang/isString');
+var isString = require('lodash/lang/isString'),
+    assign = require('lodash/object/assign');
 
 var treeSelect = require('vtree-select');
 
@@ -22,32 +23,64 @@ module.exports.select = select;
 
 
 function render(element) {
+
+  // guard
+  expect(element).to.exist;
+
   return h(element);
 }
 
 module.exports.render = render;
 
 
-function simulateEvent(element, event) {
+function simulateEvent(element, event, data) {
+
+  // guard
+  expect(element).to.exist;
+  expect(event).to.exist;
 
   var eventName;
 
   if (isString(event)) {
     eventName = event;
-    event = { type: eventName };
+    event = assign({ type: eventName }, data || {});
   } else {
     eventName = event.type;
   }
 
-  var eventHook = element.hooks['ev-' + eventName];
+  var fn, listener, evHook;
 
-  if (!eventHook) {
-    throw new Error('no ' + eventName + ' handler registered');
+  if (/^drag/.test(eventName)) {
+
+    listener = element.properties['on' + event];
+
+    if (!listener) {
+
+      // see if we used the util/dragger facilities
+      listener = element.properties['ondragstart'];
+
+      // guard
+      expect(listener).to.exist;
+
+      if (eventName !== 'dragstart') {
+        listener = listener['onDrag' + eventName.replace(/drag/, '')];
+      }
+    }
+
+    fn = listener;
+  } else {
+    evHook = element.properties['ev-' + eventName];
+
+    // guard
+    expect(evHook).to.exist;
+
+    fn = evHook.value;
   }
 
-  var fn = eventHook.value;
+  // guard
+  expect(fn).to.exist;
 
-  fn(event);
+  return fn(event);
 }
 
 module.exports.simulateEvent = simulateEvent;

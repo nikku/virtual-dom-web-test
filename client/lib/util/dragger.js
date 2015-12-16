@@ -37,7 +37,7 @@ function dragger(fn) {
   }
 
   /** drag start */
-  return function() {
+  var onDragStart = function onDragStart() {
 
     // (0) extract extra arguments (extraArgs..., event)
     var args = slice(arguments),
@@ -48,23 +48,33 @@ function dragger(fn) {
     startPosition = eventPosition(event);
 
     // (1) prevent preview image
-    event.dataTransfer.setDragImage(emptyCanvas(), 0, 0);
+    if (event.dataTransfer) {
+      event.dataTransfer.setDragImage(emptyCanvas(), 0, 0);
+    }
 
     // (2) setup drag listeners
-    var target = event.target;
+    var target = event.target,
+        onEnd;
 
-    // detach on end
-    var onEnd = function() {
-      target.removeEventListener('drag', onDrag);
-      target.removeEventListener('dragend', onEnd);
+    if (target) {
 
-      self = extraArgs = startPosition = null;
-    };
+      // detach on end
+      onEnd = function() {
+        target.removeEventListener('drag', onDrag);
+        target.removeEventListener('dragend', onEnd);
 
-    // attach drag + cleanup event
-    target.addEventListener('drag', onDrag);
-    target.addEventListener('dragend', onEnd);
+        self = extraArgs = startPosition = null;
+      };
+
+      // attach drag + cleanup event
+      target.addEventListener('drag', onDrag);
+      target.addEventListener('dragend', onEnd);
+    }
   };
+
+  onDragStart.onDrag = onDrag;
+
+  return onDragStart;
 }
 
 module.exports = dragger;

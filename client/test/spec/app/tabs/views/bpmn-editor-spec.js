@@ -1,8 +1,9 @@
 'use strict';
 
-var Actions = require('test/helper/mock/Actions');
+var Actions = require('test/helper/mock/actions'),
+    Logger = require('test/helper/mock/logger');
 
-var BpmnEditor = require('app/tabs/views/BpmnEditor');
+var BpmnEditor = require('app/tabs/views/bpmn-editor');
 
 var select = require('test/helper/vdom').select,
     render = require('test/helper/vdom').render,
@@ -16,7 +17,13 @@ describe('BpmnEditor', function() {
     var actions = new Actions();
 
     // given
-    var tab = new BpmnEditor({ actions: actions });
+    var tab = new BpmnEditor({
+      actions: actions,
+      logger: new Logger(),
+      layout: {
+        propertiesPanel: {}
+      }
+    });
 
     var $el = document.createElement('div');
 
@@ -29,39 +36,124 @@ describe('BpmnEditor', function() {
   });
 
 
-  it('should click test', function() {
+  describe('properties panel', function() {
 
-    var actions = new Actions();
+    var actions;
 
-    // given
-    var tab = new BpmnEditor({
-      actions: actions,
-      layout: {
-        propertiesPanel: {
-          open: true
+    beforeEach(function() {
+      actions = new Actions();
+    });
+
+
+    it('should close', function() {
+
+      // given
+      var tab = new BpmnEditor({
+        actions: actions,
+        logger: new Logger(),
+        layout: {
+          propertiesPanel: {
+            open: true,
+            width: 150
+          }
         }
-      }
+      });
+
+      var tree = render(tab);
+
+      var element = select('[ref=properties-toggle]', tree);
+
+      // when close toggle
+      simulateEvent(element, 'click');
+
+      // then
+      expect(actions.recordedEvents).to.eql([
+        [
+          'layout:update',
+          {
+            propertiesPanel: {
+              open: false,
+              width: 150
+            }
+          }
+        ]
+      ]);
     });
 
-    // when
-    var tree = render(tab);
 
-    var element = select('[ref=properties-toggle]', tree);
+    it('should open', function() {
 
-    // then
-    expect(element).to.exists;
+      // given
+      var tab = new BpmnEditor({
+        actions: actions,
+        logger: new Logger(),
+        layout: {
+          propertiesPanel: {
+            open: false,
+            width: 150
+          }
+        }
+      });
 
-    var panelOpen = false;
+      var tree = render(tab);
 
-    actions.on('layout:update', function(updated) {
-      panelOpen = updated.propertiesPanel.open;
+      var element = select('[ref=properties-toggle]', tree);
+
+      // when close toggle
+      simulateEvent(element, 'click');
+
+      // then
+      expect(actions.recordedEvents).to.eql([
+        [
+          'layout:update',
+          {
+            propertiesPanel: {
+              open: true,
+              width: 150
+            }
+          }
+        ]
+      ]);
     });
 
-    // but when
-    simulateEvent(element, 'click');
 
-    // then
-    expect(panelOpen).to.be.true;
+    it('should resize', function() {
+
+      // given
+      var tab = new BpmnEditor({
+        actions: actions,
+        logger: new Logger(),
+        layout: {
+          propertiesPanel: {
+            open: true,
+            width: 150
+          }
+        }
+      });
+
+      var tree = render(tab);
+
+      var element = select('[ref=properties-toggle]', tree);
+
+      // when trigger drag
+      simulateEvent(element, 'dragstart', { screenX: 0, screenY: 0 });
+      simulateEvent(element, 'drag', { screenX: 50, screenY: 0 });
+
+      // then
+      expect(actions.recordedEvents).to.eql([
+        [
+          'layout:update',
+          {
+            propertiesPanel: {
+              open: true,
+              width: 100
+            }
+          }
+        ]
+      ]);
+
+    });
+
   });
 
 });
